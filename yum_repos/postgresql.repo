@@ -1,0 +1,6 @@
+[postgresql12]
+name = postgresql12
+baseurl = https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-8-x86_64/
+module_hotfixes=1
+gpgkey=https://ftp.osuosl.org/pub/mariadb/yum/RPM-GPG-KEY-MariaDB
+gpgcheck=1
