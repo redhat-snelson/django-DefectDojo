@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/python-38:1-77@sha256:2b4bac4b01df90158b7ead4352a24a79184ea8c0a8108294cb437ee95a5a34d5 as base
+FROM registry.access.redhat.com/ubi8/python-38 as base
 
 FROM base as django
 
@@ -35,8 +35,8 @@ COPY tests/ ./tests/
 RUN \
     dnf -y install --disableplugin=subscription-manager\
         https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm && \
-    rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB && \
     # rpm --import https://yum.postgresql.org/RPM-GPG-KEY-PGDG && \
+    rpm --import https://yum.mariadb.org/RPM-GPG-KEY-MariaDB && \
     dnf -y install --disableplugin=subscription-manager \
         mariadb \
         mariadb-common \
