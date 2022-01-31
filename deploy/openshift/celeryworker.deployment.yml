@@ -17,7 +17,7 @@ spec:
       containers:
       - name: celeryworker
         image: "defectdojo/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-celery-worker.sh']
+        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-celery-worker.sh']
         env:
         - name: DD_DATABASE_URL
           valueFrom:

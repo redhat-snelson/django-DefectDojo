@@ -17,7 +17,7 @@ spec:
       initContainers:
       - name: defectdojo-init
         image: "defectdojo/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql:3306', '--', '/entrypoint-initializer.sh']
+        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '--', '/entrypoint-initializer.sh']
         env:
         - name: DD_ADMIN_USER
           valueFrom:
@@ -62,7 +62,7 @@ spec:
       containers:
       - name: uwsgi
         image: "defectdojo/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
+        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
         env:
         - name: DD_DEBUG
           valueFrom:
