@@ -3,12 +3,11 @@ kind: Service
 metadata:
   name: mysql
   labels:
-    app: defectdojo
-    app-component: mysql
+    app: mysql
 spec:
   ports:
   - port: 3306
     name: mysql
   clusterIP: None
   selector:
-    app-component: mysql
+    app: mysql
