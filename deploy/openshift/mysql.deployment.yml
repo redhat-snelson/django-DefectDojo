@@ -1,10 +1,57 @@
-image: mysql:5.7.36@sha256:7a3a7b7a29e6fbff433c339fc52245435fa2c308586481f2f92ab1df239d6a29
-environment:
-  MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-  DD_DATABASE_URL: "${DD_DATABASE_URL:-mysql://defectdojo:defectdojo@mysql:3306/defectdojo}"
-  MYSQL_USER: "${DD_DATABASE_USER:-defectdojo}"
-  MYSQL_PASSWORD: "${DD_DATABASE_PASSWORD:-defectdojo}"
-  MYSQL_DATABASE: "${DD_DATABASE_NAME:-defectdojo}"
-command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
-volumes:
-    - defectdojo_data:/var/lib/mysql
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  labels:
+    app: mysql
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: docker.io/library/mysql:5.7.36@sha256:7a3a7b7a29e6fbff433c339fc52245435fa2c308586481f2f92ab1df239d6a29
+        command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        env:
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: MYSQL_RANDOM_ROOT_PASSWORD
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: MYSQL_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql
+              key: MYSQL_DATABASE
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+
+# environment:
+# volumes:
+#     - defectdojo_data:/var/lib/mysql

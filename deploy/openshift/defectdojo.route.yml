@@ -1,11 +1,12 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: hello-openshift
+  name: defectdojo
 spec:
-  host: hello-openshift-hello-openshift.<Ingress_Domain> 
+  host: defectdojo-defectdojo.apps.dev.ocp4.hkn.lab 
   port:
-    targetPort: 8080
+    targetPort: http
+  termination: edge
   to:
     kind: Service
-    name: hello-openshift
+    name: nginx

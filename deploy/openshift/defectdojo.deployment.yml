@@ -1,18 +1,78 @@
-image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
-depends_on:
-  - mysql
-entrypoint: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
-environment:
-  DD_DEBUG: 'False'
-  DD_DJANGO_METRICS_ENABLED: "${DD_DJANGO_METRICS_ENABLED:-False}"
-  DD_ALLOWED_HOSTS: "${DD_ALLOWED_HOSTS:-*}"
-  DD_DATABASE_URL: "${DD_DATABASE_URL:-mysql://defectdojo:defectdojo@mysql:3306/defectdojo}"
-  DD_CELERY_BROKER_USER: "${DD_CELERY_BROKER_USER:-guest}"
-  DD_CELERY_BROKER_PASSWORD: "${DD_CELERY_BROKER_USER:-guest}"
-  DD_SECRET_KEY: "${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}"
-  DD_CREDENTIAL_AES_256_KEY: "${DD_CREDENTIAL_AES_256_KEY:-&91a*agLqesc*0DJ+2*bAbsUZfR*4nLw}"
-volumes:
-    - type: bind
-      source: ./docker/extra_settings
-      target: /app/docker/extra_settings
-    - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: defectdojo-deployment
+  labels:
+    app: defectdojo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: defectdojo
+  template:
+    metadata:
+      labels:
+        app: defectdojo
+    spec:
+      containers:
+      - name: uxsgi
+        image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
+        cmd: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
+        env:
+        #   DD_DEBUG: 'False'
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        #   DD_DJANGO_METRICS_ENABLED: "${DD_DJANGO_METRICS_ENABLED:-False}"
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        #   DD_ALLOWED_HOSTS: "${DD_ALLOWED_HOSTS:-*}"
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_CELERY_BROKER_USER
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_CELERY_BROKER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_SECRET_KEY
+        - name: DD_CREDENTIAL_AES_256_KEY
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_CREDENTIAL_AES_256_KEY
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+# depends_on:
+#   - mysql
+# volumes:
+#     - type: bind
+#       source: ./docker/extra_settings
+#       target: /app/docker/extra_settings
+#     - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"

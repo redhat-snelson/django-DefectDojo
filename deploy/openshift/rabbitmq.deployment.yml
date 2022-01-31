@@ -1,3 +1,28 @@
-    image: rabbitmq:3.9.11@sha256:20d5aeaad748b0a639b08fe54a8d4d311abe14d4ff1aa0d2ecfb6fbdf76cb155
-    volumes:
-       - defectdojo_rabbitmq:/var/lib/rabbitmq
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-deployment
+  labels:
+    app: rabbitmq
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+      - name: rabbitmq
+        image: docker.io/library/rabbitmq:3.9.11@sha256:20d5aeaad748b0a639b08fe54a8d4d311abe14d4ff1aa0d2ecfb6fbdf76cb155
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+    # volumes:
+    #    - defectdojo_rabbitmq:/var/lib/rabbitmq

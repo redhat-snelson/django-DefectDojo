@@ -1,16 +1,35 @@
-image: "defectdojo/defectdojo-nginx:${NGINX_VERSION:-latest}"
-depends_on:
-  - uwsgi
-environment:
-  NGINX_METRICS_ENABLED: "${NGINX_METRICS_ENABLED:-false}"
-volumes:
-  - defectdojo_media:/usr/share/nginx/html/media
-ports:
-  - target: 8080
-    published: ${DD_PORT:-8080}
-    protocol: tcp
-    mode: host
-  - target: 8443
-    published: ${DD_TLS_PORT:-8443}
-    protocol: tcp
-    mode: host
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: "defectdojo/defectdojo-nginx:${NGINX_VERSION:-latest}"
+        # command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        env:
+        - name: NGINX_METRICS_ENABLED
+          value: "false"
+        ports:
+        - containerPort: 8080
+        - containerPort: 8443
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+# volumes:
+#   - defectdojo_media:/usr/share/nginx/html/media

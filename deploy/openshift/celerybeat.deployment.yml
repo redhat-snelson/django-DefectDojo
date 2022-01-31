@@ -1,15 +1,63 @@
-    image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
-    depends_on:
-      - mysql
-      - rabbitmq
-    entrypoint: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-celery-beat.sh']
-    environment:
-      DD_DATABASE_URL: "${DD_DATABASE_URL:-mysql://defectdojo:defectdojo@mysql:3306/defectdojo}"
-      DD_CELERY_BROKER_USER: "${DD_CELERY_BROKER_USER:-guest}"
-      DD_CELERY_BROKER_PASSWORD: "${DD_CELERY_BROKER_USER:-guest}"
-      DD_SECRET_KEY: "${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}"
-      DD_CREDENTIAL_AES_256_KEY: "${DD_CREDENTIAL_AES_256_KEY:-&91a*agLqesc*0DJ+2*bAbsUZfR*4nLw}"
-    volumes:
-        - type: bind
-          source: ./docker/extra_settings
-          target: /app/docker/extra_settings
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celerybeat-deployment
+  labels:
+    app: celerybeat
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: celerybeat
+  template:
+    metadata:
+      labels:
+        app: celerybeat
+    spec:
+      containers:
+      - name: celerybeat
+        image: "defectdojo/defectdojo-django:latest"
+        cmd: 
+          - '/wait-for-it.sh'
+        args:
+          - 'mysql.defectdojo.svc:3306'
+          - '-t 30'
+          - '--'
+          - '/entrypoint-celery-beat.sh'
+        env:
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_CELERY_BROKER_USER
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_CELERY_BROKER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_SECRET_KEY
+        - name: DD_CREDENTIAL_AES_256_KEY
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_CREDENTIAL_AES_256_KEY
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+    # volumes:
+    #     - type: bind
+    #       source: ./docker/extra_settings
+    #       target: /app/docker/extra_settings
