@@ -44,14 +44,19 @@ spec:
             secretKeyRef:
               name: mysql
               key: MYSQL_DATABASE
+        ports:
+        - containerPort: 3306
         resources:
           requests:
-            memory: "64Mi"
+            memory: "1Gi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
-
-# environment:
-# volumes:
-#     - defectdojo_data:/var/lib/mysql
+            memory: "4Gi"
+            cpu: "1"
+        volumeMounts:
+        - name: defectdojo-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: defectdojo-data
+        persistentVolumeClaim:
+          claimName: mysql-data

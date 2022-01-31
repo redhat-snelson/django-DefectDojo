@@ -14,29 +14,71 @@ spec:
       labels:
         app: defectdojo
     spec:
+      initContainers:
+      - name: defectdojo-init
+        image: "defectdojo/defectdojo-django:latest"
+        cmd: ['/wait-for-it.sh', 'mysql:3306', '--', '/entrypoint-initializer.sh']
+        env:
+        - name: DD_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_ADMIN_USER
+        - name: DD_ADMIN_MAIL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_ADMIN_MAIL
+        - name: DD_ADMIN_FIRST_NAME
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_ADMIN_FIRST_NAME
+        - name: DD_ADMIN_LAST_NAME
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_ADMIN_LAST_NAME
+        - name: DD_INITIALIZE
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_INITIALIZE
+        - name: DD_DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_URL
+        - name: DD_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_SECRET_KEY
+        - name: DD_CREDENTIAL_AES_256_KEY
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_CREDENTIAL_AES_256_KEY
       containers:
-      - name: uxsgi
-        image: "defectdojo/defectdojo-django:${DJANGO_VERSION:-latest}"
+      - name: uwsgi
+        image: "defectdojo/defectdojo-django:latest"
         cmd: ['/wait-for-it.sh', 'mysql:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
         env:
-        #   DD_DEBUG: 'False'
-        - name: DD_DATABASE_URL
+        - name: DD_DEBUG
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DATABASE_URL
-        #   DD_DJANGO_METRICS_ENABLED: "${DD_DJANGO_METRICS_ENABLED:-False}"
-        - name: DD_DATABASE_URL
+              key: DD_DEBUG
+        - name: DD_DJANGO_METRICS_ENABLED
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DATABASE_URL
-        #   DD_ALLOWED_HOSTS: "${DD_ALLOWED_HOSTS:-*}"
-        - name: DD_DATABASE_URL
+              key: DD_DJANGO_METRICS_ENABLED
+        - name: DD_ALLOWED_HOSTS
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DATABASE_URL
+              key: DD_ALLOWED_HOSTS
         - name: DD_DATABASE_URL
           valueFrom:
             secretKeyRef:
@@ -62,17 +104,18 @@ spec:
             secretKeyRef:
               name: defectdojo
               key: DD_CREDENTIAL_AES_256_KEY
+        ports:
+        - containerPort: 3031
         resources:
           requests:
-            memory: "64Mi"
+            memory: "1Gi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
-# depends_on:
-#   - mysql
-# volumes:
-#     - type: bind
-#       source: ./docker/extra_settings
-#       target: /app/docker/extra_settings
-#     - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
+            memory: "4Gi"
+            cpu: "1"
+        volumeMounts:
+          - name: defectdojo-media
+            mountPath: /app/media
+      volumes:
+        - name: defectdojo-media
+          emptyDir: {}

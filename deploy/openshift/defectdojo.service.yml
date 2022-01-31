@@ -6,8 +6,8 @@ metadata:
     app: defectdojo
 spec:
   ports:
-  - port: 80
-    name: web
+  - port: 3031
+    name: uwsgi
   clusterIP: None
   selector:
     app: defectdojo

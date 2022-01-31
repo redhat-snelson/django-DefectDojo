@@ -16,20 +16,34 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: "defectdojo/defectdojo-nginx:${NGINX_VERSION:-latest}"
+        image: "defectdojo/defectdojo-nginx:latest"
         # command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
         env:
         - name: NGINX_METRICS_ENABLED
           value: "false"
+        - name: DD_UWSGI_HOST
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_UWSGI_HOST
+        - name: DD_UWSGI_PORT
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_UWSGI_PORT
         ports:
         - containerPort: 8080
         - containerPort: 8443
+        volumeMounts:
+          - name: defectdojo-media
+            mountPath: /usr/share/nginx/html/media
         resources:
           requests:
-            memory: "64Mi"
+            memory: "1Gi"
             cpu: "250m"
           limits:
-            memory: "128Mi"
-            cpu: "500m"
-# volumes:
-#   - defectdojo_media:/usr/share/nginx/html/media
+            memory: "4Gi"
+            cpu: "1"
+      volumes:
+        - name: defectdojo-media
+          emptyDir: {}

@@ -57,7 +57,3 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-    # volumes:
-    #     - type: bind
-    #       source: ./docker/extra_settings
-    #       target: /app/docker/extra_settings

@@ -44,6 +44,9 @@ spec:
             secretKeyRef:
               name: defectdojo
               key: DD_CREDENTIAL_AES_256_KEY
+        volumeMounts:
+        - name: defectdojo-media
+          mountPath: /app/media
         resources:
           requests:
             memory: "64Mi"
@@ -51,8 +54,6 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "500m"
-    # volumes:
-    #     - type: bind
-    #       source: ./docker/extra_settings
-    #       target: /app/docker/extra_settings
-    #     - "defectdojo_media:${DD_MEDIA_ROOT:-/app/media}"
+      volumes:
+      - name: defectdojo-media
+        emptyDir: {}
