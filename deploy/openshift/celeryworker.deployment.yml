@@ -28,12 +28,12 @@ spec:
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DATABASE_URL
+              key: DD_CELERY_BROKER_USER
         - name: DD_CELERY_BROKER_PASSWORD
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DATABASE_URL
+              key: DD_CELERY_BROKER_PASSWORD
         - name: DD_SECRET_KEY
           valueFrom:
             secretKeyRef:
