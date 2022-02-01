@@ -1,23 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: defectdojo-initialize-deployment
+  name: initialize-deployment
   labels:
-    app: defectdojo-initialize
+    app: initialize
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: defectdojo-initialize
+      app: initialize
   template:
     metadata:
       labels:
-        app: defectdojo-initialize
+        app: initialize
     spec:
       containers:
       - name: defectdojo-init
         image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
         cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '--', '/entrypoint-initializer.sh']
+        # cmd: ['/entrypoint-initializer.sh']
         env:
         - name: DD_ADMIN_USER
           valueFrom:
