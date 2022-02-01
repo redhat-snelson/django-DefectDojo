@@ -1,26 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: celeryworker-deployment
+  name: celery-worker-deployment
   labels:
-    app: celeryworker
+    app: defectdojo
+    defectdojo.org/component: celery-worker
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: celeryworker
+      app: defectdojo
+      defectdojo.org/component: celery-worker
   template:
     metadata:
       labels:
-        app: celeryworker
+        app: defectdojo
+        defectdojo.org/component: celery-worker
     spec:
       volumes:
       - name: defectdojo-media
         emptyDir: {}
       containers:
-      - name: celeryworker
+      - name: celery-worker
         image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-celery-worker.sh']
+        command: ['/entrypoint-celery-worker.sh']
         envFrom:
         - secretRef:
             name: defectdojo

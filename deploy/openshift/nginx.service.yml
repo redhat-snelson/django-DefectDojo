@@ -3,13 +3,15 @@ kind: Service
 metadata:
   name: nginx
   labels:
-    app: nginx
+    app: defectdojo
+    defectdojo.org/component: nginx
 spec:
   ports:
-  - port: 8080
-    name: http
-  - port: 8443
-    name: https
+  - name: http
+    port: 8080
+  - name: uwsgi
+    port: 3031
   clusterIP: None
   selector:
-    app: nginx
+    app: defectdojo
+    defectdojo.org/component: nginx

@@ -4,15 +4,18 @@ metadata:
   name: defectdojo-deployment
   labels:
     app: defectdojo
+    defectdojo.org/component: django
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: defectdojo
+      defectdojo.org/component: django
   template:
     metadata:
       labels:
         app: defectdojo
+        defectdojo.org/component: django
     spec:
       volumes:
         - name: defectdojo-media
@@ -20,13 +23,15 @@ spec:
       containers:
       - name: uwsgi
         image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
+        # command: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
         envFrom:
         - secretRef:
             name: defectdojo
-        # ports:
-        #   - name: uwsgi
-        #     containerPort: 3031
+        ports:
+        - name: http
+          containerPort: 8081
+        - name: uwsgi
+          containerPort: 3031
         resources:
           requests:
             memory: "1Gi"

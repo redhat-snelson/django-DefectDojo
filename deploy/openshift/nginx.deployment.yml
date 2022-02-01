@@ -3,37 +3,37 @@ kind: Deployment
 metadata:
   name: nginx-deployment
   labels:
-    app: nginx
+    app: defectdojo
+    defectdojo.org/component: nginx
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx
+      app: defectdojo
+      defectdojo.org/component: nginx
   template:
     metadata:
       labels:
-        app: nginx
+        app: defectdojo
+        defectdojo.org/component: nginx
     spec:
+      volumes:
+        - name: defectdojo-media
+          emptyDir: {}
       containers:
       - name: nginx
         image: "quay.io/hyperkineticnerd/defectdojo-nginx:latest"
-        # command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        envFrom:
+        - secretRef:
+            name: defectdojo
         env:
         - name: NGINX_METRICS_ENABLED
           value: "false"
-        - name: DD_UWSGI_HOST
-          valueFrom:
-            secretKeyRef:
-              name: defectdojo
-              key: DD_UWSGI_HOST
-        - name: DD_UWSGI_PORT
-          valueFrom:
-            secretKeyRef:
-              name: defectdojo
-              key: DD_UWSGI_PORT
         ports:
-        - containerPort: 8080
-        - containerPort: 8443
+        - name: http
+          containerPort: 8080
+        - name: https
+          containerPort: 8443
         volumeMounts:
           - name: defectdojo-media
             mountPath: /usr/share/nginx/html/media
@@ -44,6 +44,3 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "1"
-      volumes:
-        - name: defectdojo-media
-          emptyDir: {}

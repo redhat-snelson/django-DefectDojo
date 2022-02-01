@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: defectdojo-initializer
+  labels:
+    defectdojo.org/component: initializer
+spec:
+  template:
+    metadata:
+      labels:
+        defectdojo.org/component: initializer
+    spec:
+      restartPolicy: "OnFailure"
+      volumes:
+        - name: defectdojo-media
+          emptyDir: {}
+      containers:
+      - name: defectdojo-init
+        image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
+        command: 
+          - /entrypoint-initializer.sh
+        envFrom:
+        - secretRef:
+            name: defectdojo
+        env:
+        - name: DD_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_DATABASE_PASSWORD
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "250m"
+          limits:
+            memory: "4Gi"
+            cpu: "1"

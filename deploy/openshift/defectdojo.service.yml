@@ -4,10 +4,14 @@ metadata:
   name: defectdojo
   labels:
     app: defectdojo
+    defectdojo.org/component: django
 spec:
   ports:
-  - port: 3031
-    name: uwsgi
+  - name: http
+    port: 8080
+  - name: uwsgi
+    port: 3031
   clusterIP: None
   selector:
     app: defectdojo
+    defectdojo.org/component: django

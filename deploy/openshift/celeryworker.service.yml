@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: celeryworker
+  name: celery-worker
   labels:
-    app: celeryworker
+    app: defectdojo
+    defectdojo.org/component: celery-worker
 spec:
   ports:
   - port: 3031
     name: uwsgi
   clusterIP: None
   selector:
-    app: celeryworker
+    defectdojo.org/component: celery-worker

@@ -1,23 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: celerybeat-deployment
+  name: celery-beat-deployment
   labels:
-    app: celerybeat
+    app: defectdojo
+    defectdojo.org/component: celery-beat
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: celerybeat
+      app: defectdojo
+      defectdojo.org/component: celery-beat
   template:
     metadata:
       labels:
-        app: celerybeat
+        app: defectdojo
+        defectdojo.org/component: celery-beat
     spec:
       containers:
-      - name: celerybeat
+      - name: celery-beat
         image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-celery-beat.sh']
+        command: ['/entrypoint-celery-beat.sh']
         envFrom:
         - secretRef:
             name: defectdojo

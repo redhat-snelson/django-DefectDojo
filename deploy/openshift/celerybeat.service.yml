@@ -1,13 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: celerybeat
+  name: celery-beat
   labels:
-    app: celerybeat
+    app: defectdojo
+    defectdojo.org/component: celery-beat
 spec:
   ports:
   - port: 3031
     name: uwsgi
   clusterIP: None
   selector:
-    app: celerybeat
+    defectdojo.org/component: celery-beat
