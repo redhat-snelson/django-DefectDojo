@@ -5,7 +5,7 @@ metadata:
   labels:
     app: mysql
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
@@ -16,19 +16,20 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: docker.io/library/mysql:5.7.36@sha256:7a3a7b7a29e6fbff433c339fc52245435fa2c308586481f2f92ab1df239d6a29
-        command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+        # image: docker.io/library/mysql:5.7.36@sha256:7a3a7b7a29e6fbff433c339fc52245435fa2c308586481f2f92ab1df239d6a29
+        image: registry.redhat.io/rhel8/mysql-80
+        # command: 
+          # - '/usr/sbin/mkdir /var/lib/mysql &&'
+          # - 'mysqld'
+        # args:
+          # - '--character-set-server=utf8mb4'
+          # - '--collation-server=utf8mb4_unicode_ci'
         env:
-        - name: MYSQL_RANDOM_ROOT_PASSWORD
+        - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql
-              key: MYSQL_RANDOM_ROOT_PASSWORD
-        - name: DD_DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: defectdojo
-              key: DD_DATABASE_URL
+              key: MYSQL_ROOT_PASSWORD
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:

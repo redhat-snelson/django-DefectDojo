@@ -5,7 +5,7 @@ metadata:
   labels:
     app: celeryworker
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: celeryworker
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: celeryworker
-        image: "defectdojo/defectdojo-django:latest"
+        image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
         cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-celery-worker.sh']
         env:
         - name: DD_DATABASE_URL

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: celerybeat
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: celerybeat
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: celerybeat
-        image: "defectdojo/defectdojo-django:latest"
+        image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
         cmd: 
           - '/wait-for-it.sh'
         args:

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: defectdojo-deployment
+  name: defectdojo-initialize-deployment
   labels:
     app: defectdojo
 spec:
@@ -15,36 +15,36 @@ spec:
         app: defectdojo
     spec:
       containers:
-      - name: uwsgi
+      - name: defectdojo-init
         image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
-        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '-t', '30', '--', '/entrypoint-uwsgi.sh']
+        cmd: ['/wait-for-it.sh', 'mysql.defectdojo.svc:3306', '--', '/entrypoint-initializer.sh']
         env:
-        - name: DD_DEBUG
+        - name: DD_ADMIN_USER
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DEBUG
-        - name: DD_DJANGO_METRICS_ENABLED
+              key: DD_ADMIN_USER
+        - name: DD_ADMIN_MAIL
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_DJANGO_METRICS_ENABLED
-        - name: DD_ALLOWED_HOSTS
+              key: DD_ADMIN_MAIL
+        - name: DD_ADMIN_FIRST_NAME
           valueFrom:
             secretKeyRef:
               name: defectdojo
-              key: DD_ALLOWED_HOSTS
+              key: DD_ADMIN_FIRST_NAME
+        - name: DD_ADMIN_LAST_NAME
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_ADMIN_LAST_NAME
+        - name: DD_INITIALIZE
+          valueFrom:
+            secretKeyRef:
+              name: defectdojo
+              key: DD_INITIALIZE
         - name: DD_DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: defectdojo
-              key: DD_DATABASE_URL
-        - name: DD_CELERY_BROKER_USER
-          valueFrom:
-            secretKeyRef:
-              name: defectdojo
-              key: DD_DATABASE_URL
-        - name: DD_CELERY_BROKER_PASSWORD
           valueFrom:
             secretKeyRef:
               name: defectdojo
@@ -59,8 +59,6 @@ spec:
             secretKeyRef:
               name: defectdojo
               key: DD_CREDENTIAL_AES_256_KEY
-        ports:
-        - containerPort: 3031
         resources:
           requests:
             memory: "1Gi"
@@ -68,9 +66,6 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "1"
-        volumeMounts:
-          - name: defectdojo-media
-            mountPath: /app/media
       volumes:
         - name: defectdojo-media
           emptyDir: {}
