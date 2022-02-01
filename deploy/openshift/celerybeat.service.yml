@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: celerybeat
+  labels:
+    app: celerybeat
+spec:
+  ports:
+  - port: 3031
+    name: uwsgi
+  clusterIP: None
+  selector:
+    app: celerybeat

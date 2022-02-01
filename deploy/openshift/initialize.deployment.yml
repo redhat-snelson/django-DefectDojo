@@ -14,6 +14,9 @@ spec:
       labels:
         app: initialize
     spec:
+      volumes:
+        - name: defectdojo-media
+          emptyDir: {}
       containers:
       - name: defectdojo-init
         image: "quay.io/hyperkineticnerd/defectdojo-django:latest"
@@ -60,6 +63,9 @@ spec:
             secretKeyRef:
               name: defectdojo
               key: DD_CREDENTIAL_AES_256_KEY
+        # ports:
+        #   - name: uwsgi
+        #     containerPort: 3031
         resources:
           requests:
             memory: "1Gi"
@@ -67,6 +73,3 @@ spec:
           limits:
             memory: "4Gi"
             cpu: "1"
-      volumes:
-        - name: defectdojo-media
-          emptyDir: {}
