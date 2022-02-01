@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: defectdojo-initialize-deployment
   labels:
-    app: defectdojo
+    app: defectdojo-initialize
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: defectdojo
+      app: defectdojo-initialize
   template:
     metadata:
       labels:
-        app: defectdojo
+        app: defectdojo-initialize
     spec:
       containers:
       - name: defectdojo-init
